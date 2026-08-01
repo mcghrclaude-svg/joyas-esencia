@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node / frontend
+node_modules/
+dist/
+build/
+
+# Entornos y secretos
+.env
+.env.local
+frontend/.env.local
+
+# Datos de negocio (nunca al repo publico)
+*.db
+*.sqlite
+*.sqlite3
+/data/
+/uploads/
+/backend/uploads/
+
+# PDFs generados (catalogo)
+/output/
+*.generated.pdf
+
+# Editor / OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
