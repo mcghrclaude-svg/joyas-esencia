@@ -186,3 +186,26 @@ Desktop para este proyecto queda en pausa.
 **Consecuencias:** Ninguna automatizacion programada (tareas
 recurrentes, ETL, sincronizaciones) se implementa sin que este ADR se
 complete primero.
+
+---
+
+## ADR-010: Resolucion de imports de backend/ como paquete Python
+
+**Estado:** Aceptado
+
+**Contexto:** Los modelos de backend/models/ usan imports absolutos
+tipo "from backend.models.base import Base". Sin __init__.py en
+backend/ y sin configuracion de pythonpath, pytest no resuelve el
+paquete "backend" y falla con ModuleNotFoundError al recolectar
+tests, independientemente del contenido de los modelos.
+
+**Decision:** backend/, backend/models/, backend/core/ y
+backend/tests/ son paquetes Python regulares (con __init__.py
+vacio cada uno). La raiz del repo tiene un pyproject.toml minimo
+con [tool.pytest.ini_options] pythonpath = ["."] para que pytest
+agregue la raiz al sys.path sin necesidad de instalar el proyecto
+en modo editable.
+
+**Consecuencias:** Todo modulo nuevo dentro de backend/ debe vivir
+en una carpeta con __init__.py. Correr pytest siempre desde la raiz
+del repo (no desde adentro de backend/).

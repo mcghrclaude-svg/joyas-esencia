@@ -1,6 +1,6 @@
 # ESTADO DEL PROYECTO - Joyas MCGHR
 
-Ultima actualizacion: 2026-08-01 (fix de gobierno: URLs para web_fetch)
+Ultima actualizacion: 2026-08-01 (modelos SQLAlchemy y vista de stock)
 
 ## Resumen
 
@@ -26,14 +26,27 @@ vacio de backend/frontend, sin logica de negocio todavia.
   sesion, recalculando el HANDOFF mas reciente por fecha de archivo.
 - Esqueleto backend (sin logica): backend/models/base.py con la Base
   declarativa unica, backend/core/database.py con engine/sesion.
+- Modelos SQLAlchemy de datos reales: backend/models/catalogo.py,
+  colecciones.py, precios.py, combos.py, proveedores.py, compras.py,
+  inventario.py, ventas.py y usuarios.py, todos sobre la Base unica de
+  backend/models/base.py (ADR-001).
+- Vista SQL vista_stock_actual en backend/models/views.sql.
+- Paquete backend/ resuelto como paquete Python regular:
+  __init__.py en backend/, backend/models/, backend/core/ y
+  backend/tests/, mas pyproject.toml en la raiz con
+  [tool.pytest.ini_options] pythonpath = ["."] (ADR-010).
 - Esqueleto frontend (sin logica): frontend/src/modules/ vacio,
   frontend/tailwind.config.js con tokens placeholder.
 - .gitignore cubriendo entornos, datos de negocio y salidas generadas.
 
 ## Falta / no arrancado todavia
 
+- Tests de los modelos nuevos: backend/tests/conftest.py existe con el
+  fixture db_session (crea las tablas en sqlite en memoria), pero
+  todavia no hay ningun test_*.py que lo use. Los 9 modelos y la vista
+  estan sin cobertura de tests por ahora.
 - Todo el modelado de datos real (productos, stock, categorias,
-  clientes).
+  clientes) mas alla de lo ya cargado arriba.
 - Toda la logica de negocio de backend (API, endpoints).
 - Todo el frontend funcional (modulos reales dentro de
   frontend/src/modules/).
