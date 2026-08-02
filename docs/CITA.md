@@ -11,3 +11,4 @@ Ver docs/citas/README.md para el criterio completo.
 | ID | Fecha | Titulo corto | Archivo |
 |----|-------|--------------|---------|
 | 001 | 2026-08-01 | api.github.com bloqueada por bot detection en web_fetch | [docs/citas/CITA-001.md](citas/CITA-001.md) |
+| 002 | 2026-08-01 | web_fetch sirve contenido viejo de raw.githubusercontent.com tras un push | [docs/citas/CITA-002.md](citas/CITA-002.md) |
