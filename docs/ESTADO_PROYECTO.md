@@ -1,6 +1,6 @@
 # ESTADO DEL PROYECTO - Joyas MCGHR
 
-Ultima actualizacion: 2026-08-01 (bootstrap inicial)
+Ultima actualizacion: 2026-08-01 (fix de gobierno: URLs para web_fetch)
 
 ## Resumen
 
@@ -15,6 +15,15 @@ vacio de backend/frontend, sin logica de negocio todavia.
   docs/citas/, docs/HANDOFF_20260801.md, este archivo.
 - Scripts de mantenimiento de repo: scripts/cerrar-sesion.ps1,
   scripts/iniciar-chat-tema.ps1, scripts/chequear-conflictos.ps1.
+- Fix de gobierno: seccion "URLs para web_fetch" en CLAUDE.md con el
+  indice literal de URLs raw.githubusercontent.com de docs/ADR.md,
+  docs/CITA.md, docs/ESTADO_PROYECTO.md y el HANDOFF_*.md mas reciente.
+  Se agrego docs/citas/CITA-001.md documentando que api.github.com esta
+  bloqueada por deteccion de bots para la herramienta web_fetch de
+  Claude.ai (usar siempre raw.githubusercontent.com, nunca
+  api.github.com, para leer archivos de este repo desde Claude.ai).
+  scripts/cerrar-sesion.ps1 ahora regenera esa seccion en cada cierre de
+  sesion, recalculando el HANDOFF mas reciente por fecha de archivo.
 - Esqueleto backend (sin logica): backend/models/base.py con la Base
   declarativa unica, backend/core/database.py con engine/sesion.
 - Esqueleto frontend (sin logica): frontend/src/modules/ vacio,

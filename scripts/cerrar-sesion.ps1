@@ -15,7 +15,12 @@ Que hace:
   - Advierte si hay cambios pendientes fuera de docs/ESTADO_PROYECTO.md,
     recordando que ese archivo se debe actualizar en el mismo commit de
     cierre (ver CLAUDE.md).
-  - No commitea ni pushea nada automaticamente: solo diagnostica.
+  - Regenera la seccion "URLs para web_fetch" de CLAUDE.md, recalculando
+    cual es el docs/HANDOFF_*.md mas reciente segun la fecha del archivo
+    (LastWriteTime), no una fecha fija. Ver docs/citas/CITA-001.md para
+    el motivo (api.github.com bloqueada para web_fetch).
+  - No commitea ni pushea nada automaticamente: solo diagnostica y
+    actualiza en disco la seccion autogenerada de CLAUDE.md.
 #>
 
 param(
@@ -24,6 +29,76 @@ param(
 )
 
 $ErrorActionPreference = 'Continue'
+
+function Update-WebFetchUrlsSection {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$RepoPathResolved
+    )
+
+    $rawBaseUrl = "https://raw.githubusercontent.com/mcghrclaude-svg/joyas-esencia/main"
+    $claudeMdPath = Join-Path -Path $RepoPathResolved -ChildPath "CLAUDE.md"
+    $docsPath = Join-Path -Path $RepoPathResolved -ChildPath "docs"
+
+    if (-not (Test-Path -LiteralPath $claudeMdPath)) {
+        Write-Warning "No se encontro CLAUDE.md en $RepoPathResolved. No se regenera la seccion de URLs."
+        return
+    }
+
+    $handoffFiles = @(Get-ChildItem -LiteralPath $docsPath -Filter "HANDOFF_*.md" -File -ErrorAction SilentlyContinue)
+
+    if (@($handoffFiles).Count -eq 0) {
+        Write-Warning "No se encontro ningun docs/HANDOFF_*.md. No se regenera la seccion de URLs."
+        return
+    }
+
+    $ultimoHandoff = $handoffFiles | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+
+    $urls = @(
+        "$rawBaseUrl/docs/ADR.md",
+        "$rawBaseUrl/docs/CITA.md",
+        "$rawBaseUrl/docs/ESTADO_PROYECTO.md",
+        "$rawBaseUrl/docs/$($ultimoHandoff.Name)"
+    )
+
+    $inicioMarcador = "<!-- INICIO-AUTOGENERADO: URLs para web_fetch, no editar a mano, ver scripts/cerrar-sesion.ps1 -->"
+    $finMarcador = "<!-- FIN-AUTOGENERADO -->"
+
+    $seccionLines = New-Object System.Collections.Generic.List[string]
+    $seccionLines.Add($inicioMarcador)
+    $seccionLines.Add("Estas URLs raw sirven para que Claude.ai (via web_fetch) lea el estado")
+    $seccionLines.Add("real del repo sin depender de contenido de sesiones anteriores. Nunca")
+    $seccionLines.Add("usar api.github.com para esto (ver docs/citas/CITA-001.md): esta")
+    $seccionLines.Add("bloqueada por deteccion de bots para la herramienta web_fetch.")
+    $seccionLines.Add("")
+    foreach ($url in $urls) {
+        $seccionLines.Add("- $url")
+    }
+    $seccionLines.Add("")
+    $seccionLines.Add("Esta lista se regenera automaticamente en cada cierre de sesion (ver")
+    $seccionLines.Add("scripts/cerrar-sesion.ps1); el HANDOFF listado es siempre el mas")
+    $seccionLines.Add("reciente segun fecha de archivo.")
+    $seccionLines.Add($finMarcador)
+
+    $nuevaSeccion = [string]::Join("`r`n", $seccionLines)
+
+    $contenidoActual = Get-Content -LiteralPath $claudeMdPath -Raw
+
+    if ($contenidoActual -notmatch [regex]::Escape($inicioMarcador)) {
+        Write-Warning "CLAUDE.md no tiene los marcadores autogenerados de 'URLs para web_fetch'. No se modifica el archivo; agregalos manualmente una vez."
+        return
+    }
+
+    $patron = "(?s)$([regex]::Escape($inicioMarcador)).*?$([regex]::Escape($finMarcador))"
+    $contenidoNuevo = [regex]::Replace($contenidoActual, $patron, [System.Text.RegularExpressions.MatchEvaluator]{ param($m) $nuevaSeccion })
+
+    if ($contenidoNuevo -ne $contenidoActual) {
+        Set-Content -LiteralPath $claudeMdPath -Value $contenidoNuevo -NoNewline
+        Write-Output "CLAUDE.md actualizado: seccion 'URLs para web_fetch' regenerada (HANDOFF mas reciente: $($ultimoHandoff.Name))."
+    } else {
+        Write-Output "CLAUDE.md ya tenia la seccion 'URLs para web_fetch' al dia (HANDOFF mas reciente: $($ultimoHandoff.Name))."
+    }
+}
 
 if (-not (Test-Path -LiteralPath $RepoPath)) {
     Write-Error "RepoPath no existe: $RepoPath"
@@ -75,4 +150,10 @@ try {
     Write-Output "Ultimo commit: $lastCommit"
 } catch {
     Write-Warning "No se pudo leer el ultimo commit (repo sin commits todavia?)."
+}
+
+try {
+    Update-WebFetchUrlsSection -RepoPathResolved $repoPathResolved
+} catch {
+    Write-Warning "No se pudo regenerar la seccion 'URLs para web_fetch' de CLAUDE.md: $($_.Exception.Message)"
 }

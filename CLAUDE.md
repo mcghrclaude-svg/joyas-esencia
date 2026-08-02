@@ -81,6 +81,24 @@ Joyas_Esencia/
    depurar algo que huele a ya-visto.
 4. El HANDOFF_*.md mas reciente en docs/ - contexto de la ultima sesion.
 
+## URLs para web_fetch
+
+<!-- INICIO-AUTOGENERADO: URLs para web_fetch, no editar a mano, ver scripts/cerrar-sesion.ps1 -->
+Estas URLs raw sirven para que Claude.ai (via web_fetch) lea el estado
+real del repo sin depender de contenido de sesiones anteriores. Nunca
+usar api.github.com para esto (ver docs/citas/CITA-001.md): esta
+bloqueada por deteccion de bots para la herramienta web_fetch.
+
+- https://raw.githubusercontent.com/mcghrclaude-svg/joyas-esencia/main/docs/ADR.md
+- https://raw.githubusercontent.com/mcghrclaude-svg/joyas-esencia/main/docs/CITA.md
+- https://raw.githubusercontent.com/mcghrclaude-svg/joyas-esencia/main/docs/ESTADO_PROYECTO.md
+- https://raw.githubusercontent.com/mcghrclaude-svg/joyas-esencia/main/docs/HANDOFF_20260801.md
+
+Esta lista se regenera automaticamente en cada cierre de sesion (ver
+scripts/cerrar-sesion.ps1); el HANDOFF listado es siempre el mas
+reciente segun fecha de archivo.
+<!-- FIN-AUTOGENERADO -->
+
 ## Cierre de sesion
 
 Toda tarea que se cierra debe actualizar docs/ESTADO_PROYECTO.md en el

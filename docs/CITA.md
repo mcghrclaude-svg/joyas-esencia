@@ -10,4 +10,4 @@ Ver docs/citas/README.md para el criterio completo.
 
 | ID | Fecha | Titulo corto | Archivo |
 |----|-------|--------------|---------|
-| -  | -     | (vacio por ahora) | - |
+| 001 | 2026-08-01 | api.github.com bloqueada por bot detection en web_fetch | [docs/citas/CITA-001.md](citas/CITA-001.md) |
